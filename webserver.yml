@@ -36,5 +36,11 @@
 
   roles:
     - common-tasks
+    - role: leonidas.nvm
+      nvm:
+        user: ubuntu
+        version: v0.17.0
+        node_version: '0.10'
     - webserver
     - varnish
+
