@@ -1,7 +1,7 @@
 ---
 - name: General | Install required packages.
   apt: name={{ item }} state=latest
-  tags: common
+  tags: lamp
   with_items:
     - php5
     - php5-mysql
@@ -31,22 +31,22 @@
 #
 - name: PHP | Configuration file, php.ini
   action: template src=templates/etc-php5-apache2-php-ini.j2 dest=/etc/php5/apache2/php.ini
-  tags: common
+  tags: lamp
 
 - name: APC | Cache configuration file, apc.ini
   action: template src=templates/etc-php5-conf-d-apc-ini.j2 dest=/etc/php5/conf.d/apc.ini
-  tags: common
+  tags: lamp
 
 - name: Composer | Install PHP Composer
   action: shell curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
-  tags: common
+  tags: lamp
 
 ##
 # MySQL database setup.
 #
 - name: MySQL | Configuration file, my.cnf
   action: template src=templates/etc-mysql-my-cnf.j2 dest=/etc/mysql/my.cnf
-  tags: common
+  tags: lamp
 
 - include: ../webhead/mysql-secure.yml
 
@@ -55,23 +55,23 @@
 #
 - name: Apache | Enable some required modules
   action: command a2enmod rewrite vhost_alias
-  tags: common
+  tags: lamp
 
 - name: Apache | Configuration file for our site
   action: template src=templates/etc-apache2-sites-available-dosomething.j2 dest=/etc/apache2/sites-available/dosomething
-  tags: common
+  tags: lamp
 
 - name: Apache | SSL Configuration file for our site
   action: template src=templates/etc-apache2-sites-available-dosomething-ssl.j2 dest=/etc/apache2/sites-available/dosomething-ssl
-  tags: common
+  tags: lamp
 
 - name: Apache | Disable the default site
   action: command a2dissite default
-  tags: common
+  tags: lamp
 
 - name: Apache | Enable our new site
   action: command a2ensite dosomething
-  tags: common
+  tags: lamp
 
 # Create docroot
 - name: Creates directory
@@ -92,12 +92,6 @@
 # Drush install, a Drupal shell tool.
 #
 - include: ../webhead/ubuntu-drush.yml
-
-##
-# Varnish install, a reverse proxy
-#
-# - include: ../varnish/varnish-setup.yml
-#   when: {{ environment }}
 
 ##
 # node.js installation (latest stable instead of Ubuntu's out-of-date one)
@@ -135,11 +129,11 @@
 #
 - name: Restart Apache
   action: service name=apache2 state=restarted
-  tags: common
+  tags: lamp
 
 - name: Restart MySQL
   action: service name=mysql state=restarted
-  tags: common
+  tags: lamp
 
 - name: Restart vsftpd
   action: service name=vsftpd state=restarted
