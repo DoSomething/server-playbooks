@@ -6,17 +6,15 @@
 servers:
   - dashboard1
 
-flavor: ds.4gb-30gb
+flavor: 1
 
 type: webserver
 
-groups:
-  - default
-  - www
+groups: default,www
 
-environment: production
-tier: production
-app: beta
+environment: internal
+tier: internal
+app: dashboard
 
 # Hostname is important as we need to delete an anonymous MySQL
 # user that is created with this name, make sure you match this
