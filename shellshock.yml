@@ -1,0 +1,25 @@
+---
+- hosts: all
+  user: ubuntu
+  sudo: true
+ 
+  tasks:
+    - name: update apt cache if not done today
+      apt: update_cache=yes cache_valid_time=86400
+
+    # http://seclists.org/oss-sec/2014/q3/650
+    - name: ensure secure ansible, ubuntu 1204 edition
+      apt: pkg=bash=4.2-2ubuntu2.5 state=present
+      when: ansible_distribution=='Ubuntu' and ansible_distribution_version=='12.04'
+
+    - name: ensure secure ansible, ubuntu 1404 edition
+      apt: pkg=bash=4.3-7ubuntu1.4 state=present
+      when: ansible_distribution=='Ubuntu' and ansible_distribution_version=='14.04'
+
+    # based on the following gist and comments below. there have been several exploits, this covers them well.
+    # https://gist.github.com/kacy/2b9408af04c71fab686e
+    - name: ensure bash is not vulnerable to 201409 problem
+      shell: "foo='() { echo not patched; }' bash -c foo"
+      register: command_result
+      ignore_errors: yes
+      failed_when: "'command not found' not in command_result.stderr"
