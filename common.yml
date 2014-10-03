@@ -1,0 +1,8 @@
+---
+- hosts: common
+  user: ubuntu
+  vars_files:
+    - roles/common-tasks/vars/common-secret.yml
+
+  roles:
+    - common-tasks
