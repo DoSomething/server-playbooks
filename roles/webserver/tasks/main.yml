@@ -48,7 +48,7 @@
   action: template src=templates/etc-mysql-my-cnf.j2 dest=/etc/mysql/my.cnf
   tags: lamp
 
-- include: ../webhead/mysql-secure.yml
+- include: ./mysql-secure.yml
 
 ##
 # Apache2 setup.
@@ -91,7 +91,7 @@
 ##
 # Drush install, a Drupal shell tool.
 #
-- include: ../webhead/ubuntu-drush.yml
+- include: ./ubuntu-drush.yml
 
 - npm: name=bower global=yes
 - npm: name=grunt-cli global=yes
