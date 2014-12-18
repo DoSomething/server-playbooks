@@ -29,6 +29,10 @@
   user: ubuntu
   sudo: yes
 
+  vars_files:
+    - roles/mongo/vars/mongo-settings.yml
+    - roles/common-tasks/vars/common-secret.yml
+ 
   roles:
     - mongo
     - common-tasks

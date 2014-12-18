@@ -30,3 +30,18 @@
 - name: Clear apt cache
   apt: update_cache=yes
   sudo: true
+
+- name: Upgrade packages
+  apt: upgrade=full
+  sudo: true
+
+- name: restart machine
+  command: shutdown -r now "Ansible updates triggered"
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+- name: waiting for server to come back
+  local_action: wait_for host={{ inventory_hostname }}
+                state=started
+  sudo: false

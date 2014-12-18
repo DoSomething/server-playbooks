@@ -1,14 +1,46 @@
 ##
-# Ansible playbook for setting up a LAMP development server on Ubuntu 12.04.
+# Ansible playbook for setting up a LAMP development server on Ubuntu 14.04.
 #
-
 ---
-- hosts: webserver
-  user: root
-
+- name: add some hosts
+  hosts: localhost
   vars_files:
     - roles/webserver/vars/webserver-settings.yml
 
+  tasks:
+    - add_host:
+        name: "{{ item }}"
+        ansible_ssh_host: 127.0.0.1
+        groups: os_api
+        ansible_connection: local
+        oshost: "{{ item }}"
+      with_items: servers
+    - debug: var=groups
+
+- name: Spin up new servers
+  hosts: os_api
+  user: root
+  serial: 1
+
+  vars_files:
+    - roles/webserver/vars/webserver-settings.yml
   roles:
     - nova
+
+- name: Setup the new webservers
+  hosts: webserver
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - roles/webserver/vars/webserver-settings.yml
+    - roles/common-tasks/vars/common-secret.yml
+
+  roles:
+    - common-tasks
+    - role: leonidas.nvm
+      nvm:
+        user: dosomething
+        version: v0.17.0
+        node_version: '0.10'
     - webserver
+
