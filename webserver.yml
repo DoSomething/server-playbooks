@@ -33,14 +33,14 @@
   sudo: yes
   vars_files:
     - roles/webserver/vars/webserver-settings.yml
+    - roles/common-tasks/vars/common-secret.yml
 
   roles:
     - common-tasks
     - role: leonidas.nvm
       nvm:
-        user: ubuntu
+        user: dosomething
         version: v0.17.0
         node_version: '0.10'
     - webserver
-    - varnish
 

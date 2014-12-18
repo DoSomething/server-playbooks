@@ -12,31 +12,24 @@
     - php5-dev
     - php-pear
     - php5-gd
-    - php5-memcache
     - php-apc
     - php5-gd
     - php-soap
     - php5-xmlrpc
-    - apache2
-    - libapache2-mod-php5
+    - php5-mcrypt
+    - nginx
     - mysql-server
     - mysql-client
     - sendmail
     - unzip
     - python-mysqldb
     - glusterfs-client
+    - python-zmq
+    - libpcre3-dev
 
 ##
 # PHP Setup.
 #
-- name: PHP | Configuration file, php.ini
-  action: template src=templates/etc-php5-apache2-php-ini.j2 dest=/etc/php5/apache2/php.ini
-  tags: lamp
-
-- name: APC | Cache configuration file, apc.ini
-  action: template src=templates/etc-php5-conf-d-apc-ini.j2 dest=/etc/php5/conf.d/apc.ini
-  tags: lamp
-
 - name: Composer | Install PHP Composer
   action: shell curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
   tags: lamp
@@ -45,32 +38,16 @@
 # MySQL database setup.
 #
 - name: MySQL | Configuration file, my.cnf
-  action: template src=templates/etc-mysql-my-cnf.j2 dest=/etc/mysql/my.cnf
+  action: template src=etc-mysql-my-cnf.j2 dest=/etc/mysql/my.cnf
   tags: lamp
 
 - include: ./mysql-secure.yml
 
 ##
-# Apache2 setup.
+# NGiNX setup
 #
-- name: Apache | Enable some required modules
-  action: command a2enmod rewrite vhost_alias
-  tags: lamp
-
-- name: Apache | Configuration file for our site
-  action: template src=templates/etc-apache2-sites-available-dosomething.j2 dest=/etc/apache2/sites-available/dosomething
-  tags: lamp
-
-- name: Apache | SSL Configuration file for our site
-  action: template src=templates/etc-apache2-sites-available-dosomething-ssl.j2 dest=/etc/apache2/sites-available/dosomething-ssl
-  tags: lamp
-
-- name: Apache | Disable the default site
-  action: command a2dissite default
-  tags: lamp
-
-- name: Apache | Enable our new site
-  action: command a2ensite dosomething
+- name: NGiNX | Configuration file for our site
+  action: template src=etc-nginx-sites-available-dosomething.j2 dest=/etc/nginx/sites-available/default
   tags: lamp
 
 # Create docroot
@@ -85,7 +62,7 @@
   tags: ftp
 
 - name: FTP | Configuration setup
-  action: template src=templates/etc-vsftpd-conf.j2 dest=/etc/vsftpd.conf
+  action: template src=etc-vsftpd-conf.j2 dest=/etc/vsftpd.conf
   tags: ftp
 
 ##
@@ -93,8 +70,8 @@
 #
 - include: ./ubuntu-drush.yml
 
-- npm: name=bower global=yes
-- npm: name=grunt-cli global=yes
+#- npm: name=bower global=yes
+#- npm: name=grunt-cli global=yes
 
 ##
 # Redis server.
@@ -106,8 +83,8 @@
 ##
 # Restart services
 #
-- name: Restart Apache
-  action: service name=apache2 state=restarted
+- name: Restart NGiNX
+  action: service name=nginx state=restarted
   tags: lamp
 
 - name: Restart MySQL
@@ -117,3 +94,4 @@
 - name: Restart vsftpd
   action: service name=vsftpd state=restarted
   tags: ftp
+

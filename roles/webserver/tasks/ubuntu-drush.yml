@@ -8,10 +8,6 @@
   action: apt pkg=php-pear state=installed
   tags: drush
 
-- name: Drush | Update PEAR
-  action: command pear upgrade-all
-  tags: drush
-
 - name: Drush | Setup PEAR channel
   action: command pear channel-discover pear.drush.org creates=/usr/share/php/.channels/pear.drush.org.reg
   tags: drush
@@ -25,7 +21,7 @@
   tags: drush
 
 - name: Drush | Install drush-make-local
-  action: command drush dl make_local-6.x-1.0
+  shell: drush dl make_local-6.x-1.0 -y
   sudo_user: dosomething
   sudo: yes
   tags: drush

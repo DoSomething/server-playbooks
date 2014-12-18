@@ -9,7 +9,7 @@
   tags: common
 
 - name: MySQL | Config for easy access as root user
-  action: template src=templates/root-my-cnf.j2 dest=/root/.my.cnf
+  action: template src=root-my-cnf.j2 dest=/root/.my.cnf
   tags: common
 
 - name: MySQL | Delete anonymous MySQL server user for {{ server_hostname }}

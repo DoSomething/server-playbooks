@@ -4,7 +4,8 @@
 
 ---
 servers:
-  - moodle
+  - xyz
+  - userapi
 
 flavor: 3
 
@@ -16,9 +17,9 @@ type: webserver
 
 security_groups: default,www
 
-environment: internal
-tier: internal
-app: moodle
+environment: production
+tier: production
+app: dosomething
 
 # Hostname is important as we need to delete an anonymous MySQL
 # user that is created with this name, make sure you match this

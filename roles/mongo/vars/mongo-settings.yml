@@ -5,9 +5,9 @@
 # 3 member replica set.
 
 servers:
-  - mongo4
-  - mongo5
-  - mongo6
+  - user-mongo1
+  - user-mongo2
+  - user-mongo3
 
 # This is the flavor id or flavor name for your new boxes.  Make sure the tenant
 # has sufficient resources to accomodate each of your new boxes.
@@ -26,5 +26,5 @@ tier: production
 type: mongo
 
 # Name for the replica set
-replSet: activity
+replSetName: userapi
 
