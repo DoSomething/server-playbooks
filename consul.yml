@@ -1,0 +1,28 @@
+---
+- hosts: webserver
+  user: ubuntu
+  sudo: true
+  pre_tasks:
+    - name: Update apt
+      apt: update_cache=yes name=unzip state=present
+  roles:
+    - savagegus.consul
+  vars:
+    consul_is_ui: "true"
+    consul_datacenter: "dfw1"
+    consul_bind_address: "0.0.0.0"
+    consul_version: "0.4.1"
+    consul_join_at_start: "10.241.0.45"
+    consul_encrypt_key: "D1bFeACWU47KCo26cdtbhQ=="
+    consul_syslog: "true"
+    consul_data_dir: "/var/consul"
+    consul_client_address: "{{ ansible_default_ipv4['address'] }}"
+    consul_node_name: "{{ ansible_hostname }}"
+    consul_config_dir: "/etc/consul.d/client"
+    consul_config_file: "/etc/consul.d/client/consul.conf"
+    consul_servers: ['10.241.0.45']
+  post_tasks:
+    - name: Symlink consul executable
+      file: src={{ consul_home }}/bin/consul dest=/usr/local/bin/consul owner=root group=root state=link
+    - name: Restart consul
+      command: restart consul
