@@ -4,8 +4,7 @@
 
 ---
 servers:
-  - xyz
-  - userapi
+  - servername
 
 flavor: 3
 

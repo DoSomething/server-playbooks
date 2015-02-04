@@ -1,0 +1,9 @@
+---
+- add_host:
+   name: "{{ item }}"
+   ansible_ssh_host: 127.0.0.1
+   groups: os_api
+   ansible_connection: local
+   oshost: "{{ item }}"
+  with_items: servers
+
