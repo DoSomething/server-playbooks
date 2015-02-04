@@ -28,11 +28,7 @@
   tags: user
 
 - name: Clear apt cache
-  apt: update_cache=yes
-  sudo: true
-
-- name: Upgrade packages
-  apt: upgrade=full
+  apt: update_cache=yes upgrade=yes
   sudo: true
 
 - name: restart machine

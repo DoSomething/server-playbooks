@@ -32,7 +32,7 @@
     name: "{{ nova.info.name }}.{{ nova.info.id }}"
     ansible_ssh_host: "{{ nova.private_ip }}"
     ansible_ssh_private_key_file: ~/.ssh/search.pem
-    groups: "{{ nova.info.metadata.type }}"
+    groups: "newly-created"
 
 - name: wait for instance to boot
   wait_for:
