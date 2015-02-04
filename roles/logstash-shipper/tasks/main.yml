@@ -3,28 +3,31 @@
 #
 ---
 ##
-# Create necessary folders to ship logs to logstash.
-#
+# Use the logstash-forwarder library to manage shipping logs
+##
+- name: Add GPG key for logstash forwarder
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
 
-- name: Create folders
-  file: path={{ item }}/logstash owner=root group=root mode=0645 state=directory
-  with_items:
-    - /etc
-    - /opt
-    - /var/log
+- name: Create cert directory
+  file: path=/etc/pki/tls/certs state=directory
 
-- name: Unarchive logstash
-  unarchive: src=/root/logstash-1.4.2.tar.gz dest=/opt/logstash
+- name: Copy cert for forwarder into place
+  template: src=logstash-forwarder-crt.j2 dest=/etc/pki/tls/certs/logstash-forwarder.crt
 
-- name: Add shipper.conf
-  template: src=shipper-conf.j2 dest=/etc/logstash/shipper.conf owner=root group=root mode=0645
+- name: Add forwarder pkg to sources
+  apt_repository: repo='deb http://packages.elasticsearch.org/logstashforwarder/debian stable main' state=present update_cache=yes
 
-- name: Add logstash-shipper init file
-  template: src=logstash-shipper-init.j2 dest=/etc/init.d/logstash-shipper owner=root group=root mode=645
+- name: Install logstash forwarder
+  apt: name=logstash-forwarder
 
-- name: Enable logstash-shipper init
-  command: update-rc.d logstash-shipper defaults
+- name: Add logstash forwarder init script
+  template: src=logstash-forwarder-init.j2 dest=/etc/init.d/logstash-forwarder mode="0775"
 
-- name: Start logstash-shipper
-  service: name=logstash-shipper state=started
+- name: Update rc.d
+  command: update-rc.d logstash-forwarder defaults
 
+- name: Add logstash forwarder config file
+  template: src=logstash-forwarder-config.j2 dest=/etc/logstash-forwarder
+
+- name: Restart forwarder
+  service: state=restarted name=logstash-forwarder

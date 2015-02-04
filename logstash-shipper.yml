@@ -4,7 +4,8 @@
 
 ---
 - hosts: shippers
-  user: root
+  user: dosomething
+  sudo: yes
 
   roles:
     - logstash-shipper
