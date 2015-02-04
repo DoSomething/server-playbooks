@@ -4,15 +4,15 @@
 
 ---
 servers:
-  - testingthis
+  - servername
 
-flavor: 1
+flavor: 3
 
 # This image ID is for the Ubuntu 14.04 LTS cloud image.  To use a different image
 # run nova image-list to get its id
 image_id: c12e0e1e-0deb-4b63-be9e-2c7b98617cbe
 
-type: testing
+type: webserver
 
 security_groups: default,www
 
