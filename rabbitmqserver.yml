@@ -1,50 +1,51 @@
 ##
-# Ansible playbook for setting up a LAMP development server on Ubuntu 12.04.
+# Ansible playbook for setting up a RabbitMQ cluster
 #
 ---
-- name: add some hosts
-  hosts: localhost
-  vars_files:
-  - roles/rabbitmq/vars/rabbitmq-settings.yml
-
-  tasks:
-    - add_host:
-        name: "{{ item }}"
-        ansible_ssh_host: 127.0.0.1
-        groups: os_api
-        ansible_connection: local
-        oshost: "{{ item }}"
-      with_items: servers
-
 - name: Spin up new servers
-  hosts: os_api
-  user: root
-  serial: 1
-
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  
   vars_files:
     - roles/rabbitmq/vars/rabbitmq-settings.yml
   roles:
-    - nova
+    - ec2-provision
+  tasks:
+    - add_host: name={{ item.private_ip }} groups=just_created
+      with_items: basic_ec2.instances
+    - name: Debug
+      debug: var=basic_ec2
+    - name: Make new instance vars available
+      set_fact:
+        new_instances: "{{basic_ec2.instances}}"
+    - name: Wait for SSH to come up
+      wait_for: host={{ item.private_ip }} port=22 delay=60 timeout=320 state=started
+      with_items: basic_ec2.instances
 
 - name: Add rabbitmq to new servers
-  hosts: rabbit
+  hosts: just_created
   user: ubuntu
   sudo: yes
   vars_files:
     - roles/rabbitmq/vars/rabbitmq-settings.yml
-
+    - roles/common-tasks/vars/common-secret.yml
+  
+  tasks:
+    - name: Update /etc/hosts files
+      action: template src=roles/rabbitmq/templates/hosts.j2 dest=/etc/hosts
   roles:
     - common-tasks
-    - Stouts.rabbitmq
+    - alexeymedvedchikov.rabbitmq
 
-- name: Install supporting software
-  hosts: rabbit
-  user: ubuntu
+#- name: Install supporting software
+#  hosts: rabbit
+#  user: ubuntu
 
-  roles:
-    - role: leonidas.nvm
-      nvm:
-        user: ubuntu
-        version: v0.17.0
-        node_version: '0.10'
-    - rabbitmq
+#  roles:
+#    - role: leonidas.nvm
+#      nvm:
+#        user: ubuntu
+#        version: v0.17.0
+#        node_version: '0.10'
+#    - rabbitmq

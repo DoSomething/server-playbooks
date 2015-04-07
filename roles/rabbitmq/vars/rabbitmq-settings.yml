@@ -1,27 +1,35 @@
 # Settings that are applied to new Rabbit servers spun up in OpenStack.
 
 ---
-# Add names for each of your rabbit servers here.
-servers:
-  - rabbitQA1
+count: 3
+instance_type: t2.medium
+key_name: dosomething-mrich
+aws_region: us-east-1
+subnet_id: subnet-01bf0558
 
-# This is the flavor id or flavor name for your new boxes.  Make sure the tenant
-# has sufficient resources to accomodate each of your new boxes.
-flavor: 1
-
-# This image ID is for the Ubuntu 14.04 LTS cloud image.  To use a different image
-# run nova image-list to get its id
-image_id: c12e0e1e-0deb-4b63-be9e-2c7b98617cbe
+# This AMI ID is for the Ubuntu 14.04 LTS HVM AMI
+ami_id: ami-9a562df2
 
 # Add any security groups here.  Note that nova will fail if the security groups
 # don't already exist in the target tenant.
-security_groups: default,Jenkins-Tomcat
+group_id: sg-a64a3fc2
 
 # Metadata for how the box will be used.
-tier: qa
-type: rabbit
+instance_tags: {"rabbit_cluster_id":"1","stack_type":"rabbit"}
 
 rabbitmq_enabled: yes
+
+# Set /var/lib/rabbitmq/.erlang.cookie
+rabbitmq_erlang_cookie: 1qa2ws3ed
+
+# Set max open files for rabbit process 
+rabbitmq_ulimit_open_files: 1024
+
+# Use cluster or no
+rabbitmq_create_cluster: no
+
+# Short hostname of cluster master, on master node it must be specified too
+rabbitmq_cluster_master: mq1
 
 rabbitmq_plugins:                       # Ensure the plugins is installed
   - rabbitmq_management

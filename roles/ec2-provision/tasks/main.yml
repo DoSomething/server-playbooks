@@ -1,0 +1,14 @@
+---
+- name: Create AWS resources
+  ec2:
+    count: "{{count}}"
+    key_name: "{{key_name}}"
+    region: "{{aws_region}}"
+    group_id: "{{group_id}}"
+    instance_type: "{{instance_type}}"
+    instance_tags: "{{instance_tags}}"
+    image: "{{ami_id}}"
+    vpc_subnet_id: "{{subnet_id}}"
+    wait: yes
+  register: basic_ec2
+
